@@ -112,9 +112,37 @@ class DesktopSideBar(QWidget):
 
         self.calendar_widget = CalendarStripWidget()
         self.calendar_widget.date_changed.connect(self.task_manager.set_current_date)
-        main_layout.addWidget(self.calendar_widget)
         
         # --- 底部设置区域 ---
+        
+        # 云端模式按钮 (移到这里)
+        self.cloud_mode_btn = QPushButton("云端模式")
+        self.cloud_mode_btn.setCheckable(True)
+        self.cloud_mode_btn.setStyleSheet("""
+            QPushButton {
+                background-color: rgba(64, 64, 64, 50);
+                color: #cccccc;
+                border: 1px solid rgba(128, 128, 128, 50);
+                padding: 4px 8px;
+                border-radius: 4px;
+                font-size: 12px;
+            }
+            QPushButton:checked {
+                background-color: rgba(45, 108, 223, 80);
+                color: white;
+                border: 1px solid rgba(45, 108, 223, 100);
+            }
+            QPushButton:hover {
+                background-color: rgba(80, 80, 80, 80);
+            }
+        """)
+        self.cloud_mode_btn.clicked.connect(self.toggle_cloud_mode)
+        
+        # 使用 QHBoxLayout 来放置云端模式按钮，使其不占满整行
+        cloud_btn_layout = QHBoxLayout()
+        cloud_btn_layout.addStretch() # 弹簧挤到右边
+        cloud_btn_layout.addWidget(self.cloud_mode_btn)
+        main_layout.addLayout(cloud_btn_layout)
         
         # 设置切换按钮
         self.toggle_settings_btn = QPushButton("显示设置 (展开/收起)")
@@ -133,6 +161,9 @@ class DesktopSideBar(QWidget):
         """)
         self.toggle_settings_btn.setCheckable(True)
         self.toggle_settings_btn.clicked.connect(self.toggle_settings)
+        
+        # 将日历和设置按钮放在一起
+        main_layout.addWidget(self.calendar_widget)
         main_layout.addWidget(self.toggle_settings_btn)
 
         # 设置面板（默认隐藏）
@@ -197,6 +228,10 @@ class DesktopSideBar(QWidget):
         else:
             self.toggle_settings_btn.setText("显示设置 (展开)")
 
+    def toggle_cloud_mode(self):
+        """切换云端模式"""
+        is_checked = self.cloud_mode_btn.isChecked()
+        self.chat_panel.set_cloud_mode(is_checked)
     def update_geometry_to_screen(self):
         """根据吸附状态调整窗口位置"""
         screen_geo = QApplication.primaryScreen().availableGeometry()

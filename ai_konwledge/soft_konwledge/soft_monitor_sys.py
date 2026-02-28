@@ -8,8 +8,9 @@ from datetime import datetime
 try:
     import uiautomation as auto
 except ImportError:
-    print("错误: 缺少依赖库 'uiautomation'。请运行 'pip install uiautomation' 安装。")
-    sys.exit(1)
+    auto = None
+    # print("错误: 缺少依赖库 'uiautomation'。请运行 'pip install uiautomation' 安装。")
+    # sys.exit(1)
 
 DATA_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_FILE = os.path.join(DATA_DIR, "konwledge.json")
@@ -115,7 +116,9 @@ def _build_window_info(window):
         return None
 
 
-def get_active_app_info():
+def get_active_window_info():
+    if auto is None:
+        return None
     try:
         window = auto.GetForegroundControl()
         if not window:
@@ -205,7 +208,13 @@ def _build_key(item):
 
 
 def main():
-    print("开始运行软件监控系统...")
+    if auto is None:
+        print("Warning: uiautomation not installed. Soft monitor disabled.")
+        while True:
+            time.sleep(3600)
+        return
+
+    print(f"开始监控软件使用... (检查间隔: {CHECK_INTERVAL}s)")
     print(f"数据文件路径: {DATA_FILE}")
     current_data = load_data()
     open_records = {}

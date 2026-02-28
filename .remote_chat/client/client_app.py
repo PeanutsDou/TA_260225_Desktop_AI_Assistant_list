@@ -27,21 +27,50 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 class RemoteClient:
-    def __init__(self, config_path: str = "config.json", on_message_callback: Optional[Callable] = None):
+    def __init__(self, config_path: str = None, on_message_callback: Optional[Callable] = None):
         """初始化客户端"""
         base_dir = os.path.dirname(os.path.abspath(__file__))
+        
+        # 默认使用项目根目录下的 config.json
+        if config_path is None:
+             # project_root 已经在开头通过 sys.path 注入了，或者通过相对路径计算
+             # 这里使用开头定义的 project_root
+             config_path = os.path.join(project_root, "config.json")
+        
+        # 调试日志：打印传入的 config_path
+        logger.info(f"RemoteClient initialized with config_path argument: {config_path}")
+        
         if not os.path.isabs(config_path):
-            config_path = os.path.join(base_dir, config_path)
+            # 如果是相对路径，默认相对于 client_app.py 所在的目录 (.remote_chat/client/)
+            # 但既然我们希望默认是根目录，这里需要特别小心
+            # 如果 config_path 是 "config.json"，我们假设它是根目录的
+            if config_path == "config.json":
+                config_path = os.path.join(project_root, "config.json")
+            else:
+                config_path = os.path.join(base_dir, config_path)
+            
+        logger.info(f"Loading config from absolute path: {config_path}")
             
         self.config = self.load_config(config_path)
+        
+        # 调试日志：打印加载到的 token (部分脱敏)
+        token = self.config.get('server', {}).get('auth_token', 'NOT_FOUND')
+        masked_token = token[:4] + "***" + token[-4:] if len(token) > 8 else "***"
+        logger.info(f"Loaded auth_token: {masked_token}")
+        
         self.ws_connection = None
         self.is_connected = False
         self.on_message_callback = on_message_callback
+        self.on_cloud_response_callback = None
         self.loop = None
         
     def set_callback(self, callback: Callable):
-        """设置消息回调函数"""
+        """设置消息回调函数 (处理来自 Web 的请求)"""
         self.on_message_callback = callback
+
+    def set_cloud_response_callback(self, callback: Callable):
+        """设置云端响应回调函数 (处理来自 Cloud Agent 的回复)"""
+        self.on_cloud_response_callback = callback
         
     def load_config(self, config_path: str) -> Dict[str, Any]:
         """加载配置文件"""
@@ -116,7 +145,7 @@ class RemoteClient:
         msg_type = message.get('type', '')
         
         if msg_type == 'chat':
-            # 处理 Web 端发送的消息
+            # 处理 Web 端发送的消息 (Remote Control Mode)
             text_content = message.get('text', '')
             context = message.get('context', {})
             context['source'] = 'web'
@@ -128,6 +157,33 @@ class RemoteClient:
                     await self.on_message_callback(text_content, context)
                 else:
                     self.on_message_callback(text_content, context)
+
+        elif msg_type == 'chunk':
+            # 处理云端 Agent 的流式回复 (Cloud Mode)
+            text_content = message.get('text', '')
+            if self.on_cloud_response_callback:
+                if asyncio.iscoroutinefunction(self.on_cloud_response_callback):
+                    await self.on_cloud_response_callback("chunk", text_content)
+                else:
+                    self.on_cloud_response_callback("chunk", text_content)
+
+        elif msg_type == 'end':
+            # 处理云端 Agent 回复结束
+            if self.on_cloud_response_callback:
+                if asyncio.iscoroutinefunction(self.on_cloud_response_callback):
+                    await self.on_cloud_response_callback("end", "")
+                else:
+                    self.on_cloud_response_callback("end", "")
+
+        elif msg_type == 'error':
+             # 处理云端错误
+            text_content = message.get('text', '')
+            if self.on_cloud_response_callback:
+                 if asyncio.iscoroutinefunction(self.on_cloud_response_callback):
+                    await self.on_cloud_response_callback("error", text_content)
+                 else:
+                    self.on_cloud_response_callback("error", text_content)
+
         elif msg_type == 'clear_chat':
             context = message.get('context', {})
             context['action'] = 'clear_chat'
@@ -148,6 +204,13 @@ class RemoteClient:
             "type": "response",
             "text": reply_content,
             "context": context
+        })
+
+    async def send_chat_to_cloud(self, text: str):
+        """发送聊天请求到云端 Agent"""
+        await self.send_message({
+            "type": "chat",
+            "text": text
         })
     
     async def run(self):

@@ -8,8 +8,9 @@ from datetime import datetime, timedelta
 try:
     import uiautomation as auto
 except ImportError:
-    print("错误: 缺少依赖库 'uiautomation'。请运行 'pip install uiautomation' 安装。")
-    sys.exit(1)
+    auto = None
+    # print("错误: 缺少依赖库 'uiautomation'。请运行 'pip install uiautomation' 安装。")
+    # sys.exit(1) # 服务端部署时不需要强制退出
 
 # 配置
 DATA_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -54,6 +55,9 @@ def save_data(data):
 
 def get_active_browser_info():
     """获取当前活动窗口的浏览器信息"""
+    if auto is None:
+        return None
+
     try:
         # 获取当前前台窗口
         window = auto.GetForegroundControl()
@@ -220,6 +224,14 @@ def close_record(record, current_time, state_cache, key):
     state_cache.pop(key, None)
 
 def main():
+    if auto is None:
+        print("Warning: uiautomation not installed. Web monitor disabled.")
+        # 在服务端环境下，保持进程存活但什么都不做，或者直接退出
+        # 为了不影响主进程的守护，我们可以进入休眠循环
+        while True:
+            time.sleep(3600)
+        return
+
     print(f"开始运行网页监控系统...")
     print(f"数据文件路径: {DATA_FILE}")
     

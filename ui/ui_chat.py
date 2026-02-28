@@ -5,7 +5,7 @@ import json
 import asyncio
 import time
 from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QPushButton, 
-                             QTextEdit, QFrame, QApplication, QSizePolicy, QLabel)
+                             QTextEdit, QFrame, QApplication, QSizePolicy, QLabel, QCheckBox)
 from PyQt5.QtCore import Qt, pyqtSignal, QThread, QTimer, QObject
 from PyQt5.QtGui import QFont, QTextCursor, QTextCharFormat, QColor
 
@@ -72,6 +72,7 @@ class RemoteService(QThread):
     后台线程运行远程控制客户端 (asyncio event loop)
     """
     message_received = pyqtSignal(str, dict) # text, context
+    cloud_response_received = pyqtSignal(str, str) # type, content
     
     def __init__(self):
         super().__init__()
@@ -91,7 +92,12 @@ class RemoteService(QThread):
         
         try:
             print("Initializing RemoteClient...")
-            self.client = RemoteClient(on_message_callback=self._on_remote_message)
+            # 强制使用项目根目录下的 config.json
+            root_config_path = os.path.join(project_root, "config.json")
+            self.client = RemoteClient(config_path=root_config_path, on_message_callback=self._on_remote_message)
+            # 设置云端响应回调
+            self.client.set_cloud_response_callback(self._on_cloud_response)
+            
             self._is_running = True
             print("RemoteClient initialized. Starting run loop...")
             self.loop.run_until_complete(self.client.run())
@@ -121,6 +127,15 @@ class RemoteService(QThread):
             print("Signal message_received emitted.")
         except Exception as e:
             print(f"Error emitting signal: {e}")
+
+    def _on_cloud_response(self, msg_type, content):
+        """
+        处理云端 Agent 的响应 (运行在 asyncio 线程)
+        """
+        try:
+            self.cloud_response_received.emit(msg_type, content)
+        except Exception as e:
+            print(f"Error emitting cloud response signal: {e}")
         
     def send_reply(self, text, context):
         """
@@ -133,6 +148,18 @@ class RemoteService(QThread):
             )
         else:
             print("Remote client not running, cannot send reply.")
+
+    def send_chat_request(self, text):
+        """
+        发送聊天请求到云端 (供主线程调用)
+        """
+        if self.client and self.loop and self._is_running:
+            asyncio.run_coroutine_threadsafe(
+                self.client.send_chat_to_cloud(text),
+                self.loop
+            )
+        else:
+            print("Remote client not running, cannot send chat request.")
 
     def send_stream_chunk(self, text):
         if self.client and self.loop and self._is_running:
@@ -250,8 +277,10 @@ class ChatPanel(QWidget):
         if RemoteClient:
             self.remote_service = RemoteService()
             self.remote_service.message_received.connect(self.process_remote_message)
+            self.remote_service.cloud_response_received.connect(self.process_cloud_response)
             self.remote_service.start()
         
+        self.cloud_mode = False # 云端模式开关
         self.text_color = "white"
         self.border_color = "rgba(255, 255, 255, 50)"
         self.is_light = False
@@ -314,6 +343,26 @@ class ChatPanel(QWidget):
         
         # 触发 AI 处理 (复用 send_message 的逻辑部分)
         self.start_ai_worker(text)
+
+    def set_cloud_mode(self, enabled: bool):
+        """设置是否开启云端模式"""
+        self.cloud_mode = enabled
+        mode_text = "云端模式" if enabled else "本地模式"
+        print(f"ChatPanel switched to {mode_text}")
+        # 可以添加 UI 提示
+        
+    def process_cloud_response(self, msg_type, content):
+        """处理云端返回的流式消息"""
+        if not self.is_processing:
+            return
+
+        if msg_type == "chunk":
+            self.handle_chunk(content)
+        elif msg_type == "end":
+            self.handle_finished()
+        elif msg_type == "error":
+            self.append_message("系统", f"云端错误: {content}")
+            self.handle_finished()
         
     def start_ai_worker(self, text):
         """启动 AI 工作线程"""
@@ -333,6 +382,12 @@ class ChatPanel(QWidget):
         self.progress_mode = False
         self.final_mode = False
         
+        # 如果开启了云端模式且服务可用
+        if self.cloud_mode and self.remote_service:
+            print(f"Sending chat to cloud: {text}")
+            self.remote_service.send_chat_request(text)
+            return
+
         # 开始新会话统计
         self.session_id = str(uuid.uuid4())
         token_cal.start_session(self.session_id)
@@ -407,6 +462,13 @@ class ChatPanel(QWidget):
         
         # 顶部工具栏 (添加清空按钮)
         top_bar = QHBoxLayout()
+        
+        # 云端模式开关
+        self.cloud_mode_chk = QCheckBox("云端模式")
+        self.cloud_mode_chk.setStyleSheet("color: white;")
+        self.cloud_mode_chk.stateChanged.connect(lambda state: self.set_cloud_mode(state == Qt.Checked))
+        top_bar.addWidget(self.cloud_mode_chk)
+        
         top_bar.addStretch()
 
         self.total_stats_frame = QFrame()

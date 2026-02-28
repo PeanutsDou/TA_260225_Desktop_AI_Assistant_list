@@ -1,0 +1,28 @@
+{
+  "llm": {
+    "api_key": "sk-352d691e7561428782311a48604c598f",
+    "model": "deepseek-chat",
+    "base_url": "https://api.deepseek.com/v1"
+  },
+  "email": {
+    "smtp_server": "smtp.qq.com",
+    "smtp_port": 465,
+    "smtp_ssl": true,
+    "smtp_user": "1297195246@qq.com",
+    "smtp_auth_code": "tsqslmrpmjpujjcb",
+    "default_sender": "1297195246@qq.com",
+    "default_recipient": "1297195246@qq.com"
+  },
+  "github": {
+    "token": "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"
+  },
+  "server": {
+    "host": "0.0.0.0",
+    "port": 8000,
+    "auth_token": "your_secure_auth_token_here"
+  },
+  "client": {
+    "name": "DesktopClient",
+    "reconnect_interval": 5
+  }
+}

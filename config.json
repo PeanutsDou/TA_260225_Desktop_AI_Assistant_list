@@ -14,6 +14,15 @@
     "default_recipient": "1297195246@qq.com"
   },
   "github": {
-    "token": "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"
+    "token": "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"
+  },
+  "server": {
+    "host": "111.229.84.47",
+    "port": 8000,
+    "auth_token": "your_secure_auth_token_here"
+  },
+  "client": {
+    "name": "DesktopClient",
+    "reconnect_interval": 5
   }
 }
