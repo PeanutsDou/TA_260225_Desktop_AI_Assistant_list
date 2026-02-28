@@ -54,49 +54,69 @@
     "title": "(21 封私信 / 3 条消息) 首页 - 知乎 和另外 5 个页面 - 个人 - Microsoft​ Edge",
     "browser_type": "Chrome",
     "start_time": "2026-02-28T18:10:20.908806",
-    "end_time": "2026-02-28T18:10:20.908806",
-    "duration": 0.0,
+    "end_time": "2026-02-28T18:13:25.162066",
+    "duration": 184.25326,
     "front_duration": 0.0,
-    "background_duration": 0.0
+    "background_duration": 184.25326
   },
   {
-    "url": "https://orcaterm.cloud.tencent.com/terminal?type=lighthouse&instanceId=lhins-hjveme30&region=ap-shanghai&from=lh_console_login_btn",
-    "title": "腾讯云 OrcaTerm 和另外 5 个页面 - 个人 - Microsoft​ Edge",
+    "url": "https://www.trae.ai/account-setting?user_id=7586526523629487111&username=PeanutsDou#usage",
+    "title": "Account Setting | TRAE - Collaborate with Intelligence 和另外 5 个页面 - 个人 - Microsoft​ Edge",
     "browser_type": "Chrome",
-    "start_time": "2026-02-28T18:14:23.022471",
-    "end_time": "2026-02-28T18:23:07.372086",
-    "duration": 524.3496150000001,
-    "front_duration": 184.225274,
-    "background_duration": 340.124341
+    "start_time": "2026-02-28T18:13:25.162066",
+    "end_time": "2026-02-28T18:16:29.340059",
+    "duration": 184.177993,
+    "front_duration": 0.0,
+    "background_duration": 184.177993
   },
   {
-    "url": "https://orcaterm.cloud.tencent.com/terminal?type=lighthouse&instanceId=lhins-hjveme30&region=ap-shanghai&from=lh_console_login_btn",
-    "title": "腾讯云 OrcaTerm 和另外 6 个页面 - 个人 - Microsoft​ Edge",
+    "url": "https://www.zhihu.com",
+    "title": "(21 封私信 / 3 条消息) 首页 - 知乎 和另外 5 个页面 - 个人 - Microsoft​ Edge",
     "browser_type": "Chrome",
-    "start_time": "2026-02-28T18:26:11.684550",
-    "end_time": "2026-02-28T18:35:24.166179",
-    "duration": 552.481629,
+    "start_time": "2026-02-28T18:16:29.340059",
+    "end_time": "2026-02-28T18:19:33.942485",
+    "duration": 184.602426,
     "front_duration": 0.0,
-    "background_duration": 552.481629
-  },
-  {
-    "url": "https://orcaterm.cloud.tencent.com/terminal?type=lighthouse&instanceId=lhins-hjveme30&region=ap-shanghai&from=lh_console_login_btn",
-    "title": "腾讯云 OrcaTerm 和另外 6 个页面 - 个人 - Microsoft​ Edge",
-    "browser_type": "Chrome",
-    "start_time": "2026-02-28T18:38:28.397135",
-    "end_time": "2026-02-28T18:41:32.576086",
-    "duration": 184.178951,
-    "front_duration": 0.0,
-    "background_duration": 184.178951
+    "background_duration": 184.602426
   },
   {
     "url": "https://orcaterm.cloud.tencent.com/terminal?type=lighthouse&instanceId=lhins-hjveme30&region=ap-shanghai&from=lh_console_login_btn",
     "title": "腾讯云 OrcaTerm 和另外 6 个页面 - 个人 - Microsoft​ Edge",
     "browser_type": "Chrome",
-    "start_time": "2026-02-28T18:44:36.820992",
-    "end_time": "2026-02-28T18:47:41.026102",
-    "duration": 184.20511,
+    "start_time": "2026-02-28T18:19:33.942485",
+    "end_time": "2026-02-28T18:22:38.110683",
+    "duration": 184.168198,
     "front_duration": 0.0,
-    "background_duration": 184.20511
+    "background_duration": 184.168198
+  },
+  {
+    "url": "https://orcaterm.cloud.tencent.com/terminal?type=lighthouse&instanceId=lhins-hjveme30&region=ap-shanghai&from=lh_console_login_btn",
+    "title": "腾讯云 OrcaTerm 和另外 6 个页面 - 个人 - Microsoft​ Edge",
+    "browser_type": "Chrome",
+    "start_time": "2026-02-28T18:25:42.398351",
+    "end_time": "2026-02-28T18:34:54.997978",
+    "duration": 552.599627,
+    "front_duration": 0.0,
+    "background_duration": 552.599627
+  },
+  {
+    "url": "https://orcaterm.cloud.tencent.com/terminal?type=lighthouse&instanceId=lhins-hjveme30&region=ap-shanghai&from=lh_console_login_btn",
+    "title": "腾讯云 OrcaTerm 和另外 6 个页面 - 个人 - Microsoft​ Edge",
+    "browser_type": "Chrome",
+    "start_time": "2026-02-28T18:37:59.325075",
+    "end_time": "2026-02-28T18:44:07.756108",
+    "duration": 368.43103299999996,
+    "front_duration": 0.0,
+    "background_duration": 368.43103299999996
+  },
+  {
+    "url": "https://orcaterm.cloud.tencent.com/terminal?type=lighthouse&instanceId=lhins-hjveme30&region=ap-shanghai&from=lh_console_login_btn",
+    "title": "腾讯云 OrcaTerm 和另外 6 个页面 - 个人 - Microsoft​ Edge",
+    "browser_type": "Chrome",
+    "start_time": "2026-02-28T18:47:31.090847",
+    "end_time": "2026-02-28T18:53:38.239457",
+    "duration": 367.14861,
+    "front_duration": 0.0,
+    "background_duration": 367.14861
   }
 ]

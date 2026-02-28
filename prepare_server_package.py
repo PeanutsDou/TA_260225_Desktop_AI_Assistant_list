@@ -484,7 +484,7 @@ async def websocket_web_endpoint(websocket: WebSocket):
                         # 但我们无法轻易修改 core 代码并打包。
                         # 所以我们在 text 中注入上下文是目前改动最小的方案。
                         
-                        full_text = f"{status_hint}\n用户说：{text}"
+                        full_text = f"{status_hint}\\n用户说：{text}"
                         
                         stream_gen = cloud_agent.chat(full_text, stream=True)
                         for chunk in stream_gen:
