@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # 桌面侧边栏工具 (Desktop SideBar Tool)
 
 一个常驻桌面的侧边栏工具，集成 AI 聊天、任务管理、文件操作、网页/软件监控与桌宠动画。UI 基于 PyQt5，AI 采用“规划-执行-审查”链路，能够把自然语言指令转成可执行的桌面操作。
@@ -209,3 +210,7 @@ python tools/ani_gen_tools/sprite_processor/ui.py
 
 ---
 *Last Updated: 2026-02-26*
+=======
+# TA_260225_Desktop_AI_Assistant_list
+Files from D:\窦中君\实习\产出\TA_260225_桌面AI助手（个人开发）\list
+>>>>>>> bffd3c8fae7d0d7d547290d98121797d564d03b1
